@@ -5,7 +5,14 @@ import logo from './assets/logo.png';
 export default function App() {
   const [view, setView] = useState<'home' | 'login'>('home');
   const [loginRole, setLoginRole] = useState<'alumni' | 'student' | null>(null);
+  const [isLoginMode, setIsLoginMode] = useState(true); // Toggle between Login and Register
   const enrollRef = useRef<HTMLElement>(null);
+
+  // Form states
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [college, setCollege] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleGetStarted = () => {
     enrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -14,7 +21,37 @@ export default function App() {
   const handleEnrollClick = (role: 'alumni' | 'student') => {
     setLoginRole(role);
     setView('login');
+    setIsLoginMode(true); // Default to login view
+    setErrorMsg('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+
+    const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+
+    try {
+      const response = await fetch(`http://localhost:5000${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, role: loginRole, college })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Authentication failed');
+      }
+
+      // Success
+      localStorage.setItem('saarthi_token', data.token);
+      alert(`${isLoginMode ? 'Logged in' : 'Registered'} successfully! Welcome to Saarthi.`);
+      // Default behavior: Redirect to a dashboard or refresh state here
+    } catch (error: any) {
+      setErrorMsg(error.message);
+    }
   };
 
   if (view === 'login') {
@@ -31,40 +68,62 @@ export default function App() {
         </nav>
 
         <main className="login-main">
-          <div className="login-box">
-            <h2>{loginRole === 'alumni' ? 'Alumni Portal' : 'Student Portal'}</h2>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Login submitted (frontend only mode limit)!'); }}>
 
-              {loginRole === 'student' && (
+          <div className="login-form-side">
+            <div className="login-box">
+              <h2>{loginRole === 'alumni' ? 'Alumni Portal' : 'Student Portal'} {isLoginMode ? 'Login' : 'Signup'}</h2>
+
+              {errorMsg && <div style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>{errorMsg}</div>}
+
+              <form onSubmit={handleAuthSubmit}>
+
+                {!isLoginMode && loginRole === 'student' && (
+                  <div className="form-group">
+                    <label>Select College / Institution</label>
+                    <select className="form-control" required value={college} onChange={(e) => setCollege(e.target.value)}>
+                      <option value="" disabled>Choose your college...</option>
+                      <option value="nit">National Institute of Technology</option>
+                      <option value="iit">Indian Institute of Technology</option>
+                      <option value="bits">BITS Pilani</option>
+                      <option value="other">Other Institution</option>
+                    </select>
+                  </div>
+                )}
+
                 <div className="form-group">
-                  <label>Select College / Institution</label>
-                  <select className="form-control" required defaultValue="">
-                    <option value="" disabled>Choose your college...</option>
-                    <option value="nit">National Institute of Technology</option>
-                    <option value="iit">Indian Institute of Technology</option>
-                    <option value="bits">BITS Pilani</option>
-                    <option value="other">Other Institution</option>
-                  </select>
+                  <label>{loginRole === 'student' ? 'College Email Address' : 'Email Address'}</label>
+                  <input type="email" className="form-control" placeholder={loginRole === 'student' ? "e.g., student@college.edu.in" : "Enter your email"} required value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-              )}
+                <div className="form-group">
+                  <label>Password</label>
+                  <input type="password" className="form-control" placeholder="Enter your password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
 
-              <div className="form-group">
-                <label>{loginRole === 'student' ? 'College Email Address' : 'Email Address'}</label>
-                <input type="email" className="form-control" placeholder={loginRole === 'student' ? "e.g., student@college.edu.in" : "Enter your email"} required />
-              </div>
-              <div className="form-group">
-                <label>Password</label>
-                <input type="password" className="form-control" placeholder="Enter your password" required />
-              </div>
-              <button className="btn-blue login-submit-btn">Continue to Dashboard</button>
-              <p className="login-switch-text">
-                {loginRole === 'alumni' ? "Not an alumni? " : "Not a student? "}
-                <span onClick={() => handleEnrollClick(loginRole === 'alumni' ? 'student' : 'alumni')}>
-                  Login as {loginRole === 'alumni' ? 'Student' : 'Alumni'}
-                </span>
-              </p>
-            </form>
+                <button className="btn-blue login-submit-btn" type="submit">{isLoginMode ? 'Login to Dashboard' : 'Create Account'}</button>
+
+                <p className="login-switch-text" style={{ marginTop: '1.5rem' }}>
+                  {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+                  <span onClick={() => setIsLoginMode(!isLoginMode)}>
+                    {isLoginMode ? 'Sign up here' : 'Log in here'}
+                  </span>
+                </p>
+
+                <hr style={{ margin: '1.5rem 0', borderColor: '#f1f5f9' }} />
+
+                <p className="login-switch-text">
+                  {loginRole === 'alumni' ? "Not an alumni? " : "Not a student? "}
+                  <span onClick={() => handleEnrollClick(loginRole === 'alumni' ? 'student' : 'alumni')}>
+                    Switch to {loginRole === 'alumni' ? 'Student' : 'Alumni'} Portal
+                  </span>
+                </p>
+              </form>
+            </div>
           </div>
+
+          <div className="login-visual-side">
+            <img src="/login-illustration.png" alt="Login Graphic" className="login-illustration" />
+          </div>
+
         </main>
       </div>
     );

@@ -565,22 +565,60 @@ body {
   line-height: 1.6;
 }
 
-/* Login View */
+/* Login View - Split Layout */
 .login-main {
   flex-grow: 1;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 4rem;
+  padding: 0;
+  height: 100%;
+}
+
+.login-form-side {
+  padding: 4rem 6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
 }
 
 .login-box {
-  background: white;
-  padding: 4rem 3rem;
-  border-radius: var(--border-radius-xl);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 450px;
+  margin: 0 auto;
+}
+
+.login-visual-side {
+  background-color: var(--color-primary-light);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-xl);
+  margin: 1.5rem;
+}
+
+/* Optional soft gradient for the visual side */
+.login-visual-side::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(18, 121, 242, 0.1) 0%, rgba(253, 155, 90, 0.05) 100%);
+  z-index: 1;
+}
+
+.login-illustration {
+  width: 80%;
+  height: auto;
+  position: relative;
+  z-index: 2;
+  object-fit: contain;
 }
 
 .login-box h2 {
