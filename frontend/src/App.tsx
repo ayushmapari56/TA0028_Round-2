@@ -240,8 +240,8 @@ export default function App() {
         {/* Right Content */}
         <section className="hero-content">
           <h1>
-            Book <span className="highlight">3x more</span><br />
-            meetings in<br />
+            Contact <span className="highlight">3x more</span><br />
+            alumni in<br />
             less time.
           </h1>
           <p>
