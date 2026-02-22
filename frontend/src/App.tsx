@@ -12,7 +12,7 @@ const matchAlumni = [
 ];
 
 export default function App() {
-  const [view, setView] = useState<'home' | 'enroll' | 'login' | 'dashboard'>('home');
+  const [view, setView] = useState<'home' | 'enroll' | 'login' | 'login-chooser' | 'dashboard'>('home');
   const [loginRole, setLoginRole] = useState<'alumni' | 'student' | null>(null);
   const [isLoginMode, setIsLoginMode] = useState(true); // Toggle between Login and Register
   const enrollRef = useRef<HTMLElement>(null);
@@ -96,6 +96,62 @@ export default function App() {
     }
     */
   };
+
+  if (view === 'login-chooser') {
+    return (
+      <div className="splash-container">
+
+        {/* Left Side: Login Graphic */}
+        <div className="splash-image-side" style={{ padding: '2rem' }}>
+          <img
+            src="/login-illustration.png"
+            alt="Login Gateway"
+            className="splash-image"
+            style={{ objectFit: 'contain', backgroundColor: 'var(--color-primary-light)' }}
+          />
+        </div>
+
+        {/* Right Side: Login Options */}
+        <div className="splash-content-side">
+          <div className="splash-content">
+            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', lineHeight: '1.2' }}>Welcome back to Saarthi</h2>
+            <p style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>Select your portal to continue.</p>
+
+            <div className="splash-buttons">
+              <button className="btn-splash" onClick={() => {
+                setLoginRole('alumni');
+                setIsLoginMode(true);
+                setView('login');
+              }}>
+                Login as Alumni
+                <div className="arrow-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+              <button className="btn-splash" onClick={() => {
+                setLoginRole('student');
+                setIsLoginMode(true);
+                setView('login');
+              }}>
+                Login as Student
+                <div className="arrow-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+
+            <p className="login-switch-text" style={{ marginTop: '2.5rem', textAlign: 'left' }}>
+              <span onClick={() => setView('home')}>← Back to Homepage</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (view === 'login') {
     return (
@@ -231,7 +287,10 @@ export default function App() {
         </ul>
 
         <div className="nav-actions">
-          <button className="btn-login" onClick={() => handleGetStarted()}>Log in</button>
+          <button className="btn-login" onClick={() => {
+            setView('login-chooser');
+            window.scrollTo({ top: 0 });
+          }}>Log in</button>
           <button className="btn-primary" onClick={() => handleGetStarted()}>Sign-up</button>
         </div>
       </nav>
