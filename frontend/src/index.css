@@ -565,48 +565,102 @@ body {
   line-height: 1.6;
 }
 
-/* Splash Screen (Enrollment Choose Path) */
+/* Splash Screen (Enrollment Choose Path) - Split Layout */
 .splash-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f4f8;
+  /* Light blue/grey to match reference */
+  padding: 0;
+  overflow: hidden;
+}
+
+.splash-image-side {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.splash-content-side {
+  padding: 4rem 6rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: var(--color-bg);
-  text-align: center;
-  padding: 2rem;
-  position: relative;
-  overflow: hidden;
+  height: 100%;
 }
 
 .splash-content {
   position: relative;
   z-index: 2;
-  background: white;
-  padding: 4rem;
-  border-radius: var(--border-radius-xl);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
   max-width: 600px;
   width: 100%;
 }
 
-.splash-content h2 {
-  font-size: 2.5rem;
+.splash-content-subtitle {
+  color: var(--color-primary);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   margin-bottom: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.splash-content h2 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
   color: var(--color-text-main);
+  line-height: 1.1;
+  font-weight: 800;
 }
 
 .splash-content p {
   color: var(--color-text-muted);
+  margin-bottom: 2.5rem;
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.splash-features {
   margin-bottom: 3rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-main);
+  font-weight: 600;
   font-size: 1.1rem;
+}
+
+.check-icon {
+  color: var(--color-primary);
 }
 
 .splash-buttons {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
+  gap: 1.2rem;
+  align-items: flex-start;
 }
 
 .btn-splash {
@@ -614,33 +668,31 @@ body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 400px;
-  padding: 1.5rem 2rem;
-  background-color: white;
-  border: 2px solid #e2e8f0;
+  max-width: 350px;
+  padding: 1.2rem 1.8rem;
+  background-color: var(--color-text-main);
+  /* Dark navy/black from reference */
+  border: none;
   border-radius: 100px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text-main);
+  color: white;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .btn-splash:hover {
-  border-color: var(--color-primary);
   background-color: var(--color-primary);
-  color: white;
-  transform: translateY(-5px) scale(1.02);
+  transform: translateY(-3px);
   box-shadow: 0 15px 30px rgba(18, 121, 242, 0.2);
 }
 
 .btn-splash .arrow-icon {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: white;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -653,31 +705,41 @@ body {
   transform: translateX(5px);
 }
 
-/* Background decorations for splash */
-.splash-bg-blob {
+/* Background decorations for right side */
+.splash-bg-decor {
   position: absolute;
+  right: -5%;
+  top: 15%;
+  width: 400px;
+  height: 400px;
+  background-color: white;
   border-radius: 50%;
-  filter: blur(80px);
   z-index: 1;
-  opacity: 0.6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
 }
 
-.splash-bg-blob.top-left {
-  top: -10%;
-  left: -10%;
-  width: 500px;
-  height: 500px;
-  background-color: rgba(18, 121, 242, 0.15);
-  /* Primary */
+.splash-bg-decor h3 {
+  font-size: 6rem;
+  font-weight: 900;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1;
 }
 
-.splash-bg-blob.bottom-right {
-  bottom: -10%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background-color: rgba(253, 155, 90, 0.1);
-  /* Accent */
+.splash-bg-decor h3 sup {
+  font-size: 3rem;
+}
+
+.splash-bg-decor p {
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 200px;
+  margin-top: 1rem;
+  font-size: 0.95rem;
 }
 
 /* Login View - Split Layout */

@@ -133,35 +133,75 @@ export default function App() {
   if (view === 'enroll') {
     return (
       <div className="splash-container">
-        <div className="splash-bg-blob top-left"></div>
-        <div className="splash-bg-blob bottom-right"></div>
 
-        <div className="splash-content">
-          <h2>Choose your path</h2>
-          <p>Join the Saarthi platform to connect, grow, and succeed alongside top graduates and ambitious students.</p>
+        {/* Left Side: Big Image */}
+        <div className="splash-image-side">
+          <img
+            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+            alt="Students Networking"
+            className="splash-image"
+          />
+        </div>
 
-          <div className="splash-buttons">
-            <button className="btn-splash" onClick={() => handleEnrollClick('alumni')}>
-              Enroll as Alumni
-              <div className="arrow-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
-            <button className="btn-splash" onClick={() => handleEnrollClick('student')}>
-              Enroll as Student
-              <div className="arrow-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
+        {/* Right Side: Content & Buttons */}
+        <div className="splash-content-side">
+          <div className="splash-bg-decor">
+            <h3>20<sup>+</sup></h3>
+            <p>Years more of business consulting experiences we have.</p>
           </div>
 
-          <p className="login-switch-text" style={{ marginTop: '2.5rem' }}>
-            <span onClick={() => setView('home')}>← Back to Homepage</span>
-          </p>
+          <div className="splash-content">
+            <div className="splash-content-subtitle">
+              <span>//</span> NUMBER #1 COLLEGE NETWORK
+            </div>
+
+            <h2>Empowering your<br />career vision</h2>
+            <p>Our mission is to empower students of all backgrounds to thrive in an ever-changing professional landscape. We are committed to delivering exceptional networking value and strategic mentorship from top industry leaders.</p>
+
+            <div className="splash-features">
+              <div className="feature-item">
+                <svg className="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Expertise and experience
+              </div>
+              <div className="feature-item">
+                <svg className="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Student Centric approach
+              </div>
+              <div className="feature-item">
+                <svg className="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Commitment to excellence
+              </div>
+            </div>
+
+            <div className="splash-buttons">
+              <button className="btn-splash" onClick={() => handleEnrollClick('alumni')}>
+                Enroll as Alumni
+                <div className="arrow-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+              <button className="btn-splash" onClick={() => handleEnrollClick('student')}>
+                Enroll as Student
+                <div className="arrow-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+
+            <p className="login-switch-text" style={{ marginTop: '2.5rem', textAlign: 'left' }}>
+              <span onClick={() => setView('home')}>← Back to Homepage</span>
+            </p>
+          </div>
         </div>
       </div>
     );
