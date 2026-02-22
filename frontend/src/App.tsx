@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './index.css';
 import logo from './assets/logo.png';
 
@@ -13,6 +13,22 @@ export default function App() {
   const [password, setPassword] = useState('');
   const [college, setCollege] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.1 }); // Trigger when 10% visible
+
+    const hiddenElements = document.querySelectorAll('.animate-on-scroll');
+    hiddenElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [view]); // Re-run when view changes (e.g., returning home)
 
   const handleGetStarted = () => {
     // If we're already on the home page, scroll down. Otherwise go to home and scroll.
@@ -269,10 +285,11 @@ export default function App() {
 
       {/* Enrollment Section (Integrated via scroll instead of separate view) */}
       <section ref={enrollRef}>
-        <div className="splash-container">
+        <div className="splash-container" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
+          {/* Added padding to create a gap when scrolling */}
 
           {/* Left Side: Big Image */}
-          <div className="splash-image-side">
+          <div className="splash-image-side animate-on-scroll">
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
               alt="Students Networking"
@@ -282,20 +299,20 @@ export default function App() {
 
           {/* Right Side: Content & Buttons */}
           <div className="splash-content-side">
-            <div className="splash-bg-decor">
+            <div className="splash-bg-decor animate-on-scroll delay-500">
               <h3>20<sup>+</sup></h3>
               <p style={{ fontSize: '0.85rem' }}>Years of combined mentor expertise.</p>
             </div>
 
             <div className="splash-content" style={{ padding: '2rem 4rem' }}>
-              <div className="splash-content-subtitle">
+              <div className="splash-content-subtitle animate-on-scroll delay-100">
                 <span>//</span> NUMBER #1 COLLEGE NETWORK
               </div>
 
-              <h2 style={{ fontSize: '2.8rem', marginBottom: '1rem' }}>Empowering your<br />career vision</h2>
-              <p style={{ fontSize: '1rem', marginBottom: '2rem' }}>Our mission is to empower students of all backgrounds to thrive in an ever-changing professional landscape. We deliver exceptional networking value and mentorship.</p>
+              <h2 className="animate-on-scroll delay-100" style={{ fontSize: '2.8rem', marginBottom: '1rem' }}>Empowering your<br />career vision</h2>
+              <p className="animate-on-scroll delay-200" style={{ fontSize: '1rem', marginBottom: '2rem' }}>Our mission is to empower students of all backgrounds to thrive in an ever-changing professional landscape. We deliver exceptional networking value and mentorship.</p>
 
-              <div className="splash-features" style={{ marginBottom: '2rem' }}>
+              <div className="splash-features animate-on-scroll delay-300" style={{ marginBottom: '2rem' }}>
                 <div className="feature-item" style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>
                   <svg className="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
@@ -316,7 +333,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="splash-buttons">
+              <div className="splash-buttons animate-on-scroll delay-400">
                 <button className="btn-splash" style={{ padding: '1rem 1.5rem', fontSize: '1rem' }} onClick={() => handleEnrollClick('alumni')}>
                   Enroll as Alumni
                   <div className="arrow-icon" style={{ width: '30px', height: '30px' }}>
