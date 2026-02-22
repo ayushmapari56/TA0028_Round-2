@@ -63,6 +63,15 @@ export default function App() {
     e.preventDefault();
     setErrorMsg('');
 
+    // --- TEMPORARY MOCK AUTHENTICATION FOR UI SHOWCASE ---
+    // Bypassing the real backend so you can easily see the dashboard
+    console.log(`Mocking auth for: ${email}`);
+    localStorage.setItem('saarthi_token', 'mock_token_123');
+    setView('dashboard');
+    window.scrollTo({ top: 0 });
+
+    /* 
+    // REAL BACKEND LOGIC (Commented out for now)
     const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
 
     try {
@@ -85,6 +94,7 @@ export default function App() {
     } catch (error: any) {
       setErrorMsg(error.message);
     }
+    */
   };
 
   if (view === 'login') {
