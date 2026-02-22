@@ -34,9 +34,23 @@ export default function App() {
           <div className="login-box">
             <h2>{loginRole === 'alumni' ? 'Alumni Portal' : 'Student Portal'}</h2>
             <form onSubmit={(e) => { e.preventDefault(); alert('Login submitted (frontend only mode limit)!'); }}>
+
+              {loginRole === 'student' && (
+                <div className="form-group">
+                  <label>Select College / Institution</label>
+                  <select className="form-control" required defaultValue="">
+                    <option value="" disabled>Choose your college...</option>
+                    <option value="nit">National Institute of Technology</option>
+                    <option value="iit">Indian Institute of Technology</option>
+                    <option value="bits">BITS Pilani</option>
+                    <option value="other">Other Institution</option>
+                  </select>
+                </div>
+              )}
+
               <div className="form-group">
-                <label>Email Address</label>
-                <input type="email" className="form-control" placeholder="Enter your email" required />
+                <label>{loginRole === 'student' ? 'College Email Address' : 'Email Address'}</label>
+                <input type="email" className="form-control" placeholder={loginRole === 'student' ? "e.g., student@college.edu.in" : "Enter your email"} required />
               </div>
               <div className="form-group">
                 <label>Password</label>
