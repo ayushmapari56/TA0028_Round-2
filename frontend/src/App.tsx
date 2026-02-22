@@ -2,8 +2,17 @@ import { useState, useRef, useEffect } from 'react';
 import './index.css';
 import logo from './assets/logo.png';
 
+const matchAlumni = [
+  { id: 1, name: "Rahul Sharma", role: "Software Engineer", company: "Google", match: "98%", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" },
+  { id: 2, name: "Priya Patel", role: "Product Manager", company: "Microsoft", match: "95%", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" },
+  { id: 3, name: "Amit Kumar", role: "Data Scientist", company: "Amazon", match: "89%", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" },
+  { id: 4, name: "Neha Gupta", role: "UX Designer", company: "Adobe", match: "85%", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" },
+  { id: 5, name: "Vikram Singh", role: "Backend Dev", company: "Netflix", match: "82%", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" },
+  { id: 6, name: "Ananya Desai", role: "Frontend Dev", company: "Meta", match: "78%", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" },
+];
+
 export default function App() {
-  const [view, setView] = useState<'home' | 'enroll' | 'login'>('home');
+  const [view, setView] = useState<'home' | 'enroll' | 'login' | 'dashboard'>('home');
   const [loginRole, setLoginRole] = useState<'alumni' | 'student' | null>(null);
   const [isLoginMode, setIsLoginMode] = useState(true); // Toggle between Login and Register
   const enrollRef = useRef<HTMLElement>(null);
@@ -71,8 +80,8 @@ export default function App() {
 
       // Success
       localStorage.setItem('saarthi_token', data.token);
-      alert(`${isLoginMode ? 'Logged in' : 'Registered'} successfully! Welcome to Saarthi.`);
-      // Default behavior: Redirect to a dashboard or refresh state here
+      setView('dashboard');
+      window.scrollTo({ top: 0 });
     } catch (error: any) {
       setErrorMsg(error.message);
     }
@@ -149,6 +158,46 @@ export default function App() {
           </div>
 
         </main>
+      </div>
+    );
+  }
+
+  if (view === 'dashboard') {
+    return (
+      <div className="dashboard-container">
+        <nav className="dashboard-nav">
+          <div className="logo dashboard-logo">
+            <img src={logo} alt="Saarthi Logo" className="nav-logo-img" />
+            Saarthi <span>Dashboard</span>
+          </div>
+          <button className="btn-logout" onClick={() => {
+            localStorage.removeItem('saarthi_token');
+            setView('home');
+          }}>Log Out</button>
+        </nav>
+
+        <div className="dashboard-content">
+          <div className="ai-match-header">
+            <h1>Your Top Mentor Matches</h1>
+            <p>We've found the perfect connections for your career goals based on our AI matching algorithm.</p>
+          </div>
+
+          <div className="carousel-container">
+            <div className="carousel-3d">
+              {matchAlumni.map((alumni) => (
+                <div key={alumni.id} className="carousel-card">
+                  <div className="match-badge">{alumni.match} Match</div>
+                  <img src={alumni.img} alt={alumni.name} />
+                  <div className="card-info">
+                    <h3>{alumni.name}</h3>
+                    <p>{alumni.role} @ <strong>{alumni.company}</strong></p>
+                    <button className="btn-connect">Connect Now</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
