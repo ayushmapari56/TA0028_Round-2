@@ -77,7 +77,7 @@ export default function App() {
 
               <form onSubmit={handleAuthSubmit}>
 
-                {!isLoginMode && loginRole === 'student' && (
+                {loginRole === 'student' && (
                   <div className="form-group">
                     <label>Select College / Institution</label>
                     <select className="form-control" required value={college} onChange={(e) => setCollege(e.target.value)}>
