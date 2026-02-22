@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import matchingRoutes from './routes/matching.js';
 
 // Load env variables
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/matching', matchingRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

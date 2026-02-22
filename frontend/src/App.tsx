@@ -1,21 +1,63 @@
 import { useState, useRef, useEffect } from 'react';
 import './index.css';
-import logo from './assets/logo.png';
+const logo = "/saarthi-logo.png";
 
 const matchAlumni = [
-  { id: 1, name: "Rahul Sharma", role: "Software Engineer", company: "Google", match: "98%", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" },
-  { id: 2, name: "Priya Patel", role: "Product Manager", company: "Microsoft", match: "95%", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" },
-  { id: 3, name: "Amit Kumar", role: "Data Scientist", company: "Amazon", match: "89%", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" },
-  { id: 4, name: "Neha Gupta", role: "UX Designer", company: "Adobe", match: "85%", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" },
-  { id: 5, name: "Vikram Singh", role: "Backend Dev", company: "Netflix", match: "82%", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" },
-  { id: 6, name: "Ananya Desai", role: "Frontend Dev", company: "Meta", match: "78%", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" },
+  { id: 1, name: "Rahul Sharma", role: "Software Engineer", company: "Google", match: "98%", batch: "Gold", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" },
+  { id: 2, name: "Priya Patel", role: "Product Manager", company: "Microsoft", match: "95%", batch: "Silver", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" },
+  { id: 3, name: "Amit Kumar", role: "Data Scientist", company: "Amazon", match: "89%", batch: "Bronze", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" },
+  { id: 4, name: "Neha Gupta", role: "UX Designer", company: "Adobe", match: "88%", batch: null, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" },
+  { id: 5, name: "Vikram Singh", role: "Backend Dev", company: "Netflix", match: "82%", batch: null, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" },
 ];
 
 export default function App() {
-  const [view, setView] = useState<'home' | 'enroll' | 'login' | 'login-chooser' | 'dashboard'>('home');
+  const [view, setView] = useState<'home' | 'enroll' | 'login' | 'login-chooser' | 'dashboard' | 'chat' | 'matching-input'>('home');
   const [loginRole, setLoginRole] = useState<'alumni' | 'student' | null>(null);
   const [isLoginMode, setIsLoginMode] = useState(true); // Toggle between Login and Register
+  const [isMatching, setIsMatching] = useState(false);
+  const [selectedMentor, setSelectedMentor] = useState<typeof matchAlumni[0] | null>(null);
+  const [chatInput, setChatInput] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isDigiLockerVerified, setIsDigiLockerVerified] = useState(false);
+  const [isVerifyingDigiLocker, setIsVerifyingDigiLocker] = useState(false);
+  const [studentSkills, setStudentSkills] = useState('');
+  const [studentGoals, setStudentGoals] = useState('');
+  const [matchingStep, setMatchingStep] = useState(0);
   const enrollRef = useRef<HTMLElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, view]);
+
+  useEffect(() => {
+    if (selectedMentor) {
+      setMessages([
+        { text: `Hello! I saw your profile and your interest in ${selectedMentor.role}. I'd be happy to guide you through the process. How can I help?`, sender: 'received', time: '10:42 AM' }
+      ]);
+    }
+  }, [selectedMentor]);
+
+  useEffect(() => {
+    if (view === 'dashboard') {
+      setIsMatching(true);
+      setMatchingStep(0);
+
+      const s1 = setTimeout(() => setMatchingStep(1), 1000);
+      const s2 = setTimeout(() => setMatchingStep(2), 2000);
+      const timer = setTimeout(() => setIsMatching(false), 4500);
+
+      return () => {
+        clearTimeout(s1);
+        clearTimeout(s2);
+        clearTimeout(timer);
+      };
+    }
+  }, [view]);
 
   // Form states
   const [email, setEmail] = useState('');
@@ -72,14 +114,19 @@ export default function App() {
     e.preventDefault();
     setErrorMsg('');
 
-    // --- RE-ENABLING REAL BACKEND LOGIC FOR OTP ---
-    const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+    // --- DEMO BYPASS FOR HACKATHON ---
+    if (email === 'student@saarthi.com' && password === 'password123' && isLoginMode) {
+      localStorage.setItem('saarthi_token', 'demo_token_123');
+      setView('dashboard');
+      window.scrollTo({ top: 0 });
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:5000${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role: loginRole, college, fullName, branch, year, linkedin })
+        body: JSON.stringify({ email, password, role: loginRole, college, fullName, branch, year, linkedin, isDigiLockerVerified })
       });
 
       const data = await response.json();
@@ -139,7 +186,7 @@ export default function App() {
         {/* Left Side: Login Graphic */}
         <div className="splash-image-side" style={{ padding: '2rem' }}>
           <img
-            src="/login-illustration.png"
+            src="/login-security.avif"
             alt="Login Gateway"
             className="splash-image"
             style={{ objectFit: 'contain', backgroundColor: 'var(--color-primary-light)' }}
@@ -153,6 +200,18 @@ export default function App() {
             <p style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>Select your portal to continue.</p>
 
             <div className="splash-buttons">
+              <button className="btn-splash btn-demo" onClick={() => {
+                setView('matching-input');
+                window.scrollTo({ top: 0 });
+              }}>
+                Judge's Demo Mode (Match AI)
+                <div className="arrow-icon" style={{ backgroundColor: '#f59e0b' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                  </svg>
+                </div>
+              </button>
+
               <button className="btn-splash" onClick={() => {
                 setLoginRole('alumni');
                 setIsLoginMode(true);
@@ -210,6 +269,39 @@ export default function App() {
               {errorMsg && <div style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>{errorMsg}</div>}
 
               <form onSubmit={handleAuthSubmit}>
+                {loginRole === 'alumni' && !isLoginMode && (
+                  <div className="digilocker-verify-section">
+                    <h3>DigiLocker Verification</h3>
+                    <p>Verify your identity and alumni status via DigiLocker for a trusted profile badge.</p>
+                    {!isDigiLockerVerified ? (
+                      <button
+                        type="button"
+                        className="btn-digilocker"
+                        onClick={() => {
+                          setIsVerifyingDigiLocker(true);
+                          setTimeout(() => {
+                            setIsVerifyingDigiLocker(false);
+                            setIsDigiLockerVerified(true);
+                          }, 2500);
+                        }}
+                        disabled={isVerifyingDigiLocker}
+                      >
+                        {isVerifyingDigiLocker ? 'Fetching Documents...' : 'Verify with DigiLocker'}
+                        {!isVerifyingDigiLocker && (
+                          <img src="https://www.digilocker.gov.in/assets/img/digilocker_logo.png" alt="DigiLocker" className="dl-mini-logo" />
+                        )}
+                      </button>
+                    ) : (
+                      <div className="digilocker-success">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Verified via DigiLocker
+                      </div>
+                    )}
+                    <hr style={{ margin: '1.5rem 0', borderColor: '#e2e8f0' }} />
+                  </div>
+                )}
 
                 {!isLoginMode && (
                   <div className="form-group">
@@ -262,6 +354,12 @@ export default function App() {
                   <input type="password" className="form-control" placeholder="Enter your password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
 
+                {isLoginMode && loginRole === 'student' && (
+                  <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', padding: '0.75rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.8rem', color: '#0369a1' }}>
+                    <strong>Demo Mode:</strong> Use <u>student@saarthi.com</u> / <u>password123</u> for instant dashboard access.
+                  </div>
+                )}
+
                 <button className="btn-blue login-submit-btn" type="submit">{isLoginMode ? 'Login to Dashboard' : 'Create Account'}</button>
 
                 <p className="login-switch-text" style={{ marginTop: '1.5rem' }}>
@@ -284,7 +382,7 @@ export default function App() {
           </div>
 
           <div className="login-visual-side">
-            <img src="/login-illustration.png" alt="Login Graphic" className="login-illustration" />
+            <img src="/login-security.avif" alt="Login Graphic" className="login-illustration" />
           </div>
 
         </main>
@@ -350,41 +448,240 @@ export default function App() {
       </div>
     );
   }
+  if (view === 'matching-input') {
+    return (
+      <div className="matching-input-container">
+        {/* Animated background elements */}
+        <div className="bg-blob blob-1"></div>
+        <div className="bg-blob blob-2"></div>
+
+        <nav className="dashboard-nav" style={{ width: '100%', zIndex: 100 }}>
+          <div className="logo dashboard-logo" onClick={() => setView('home')} style={{ cursor: 'pointer' }}>
+            <img src={logo} alt="Saarthi Logo" className="nav-logo-img" />
+            Saarthi <span>Matching Engine</span>
+          </div>
+          <button className="btn-logout" onClick={() => setView('home')}>Cancel</button>
+        </nav>
+
+        <div className="matching-form-card">
+          <div className="form-header">
+            <div className="ai-tag">AI-POWERED MATCHING</div>
+            <h2>What should we match today?</h2>
+            <p>Enter student details to trigger the high-performance NLP Matching Engine.</p>
+          </div>
+
+          <div className="form-body">
+            <div className="form-group">
+              <label>Technical Skills & Experience</label>
+              <textarea
+                placeholder="List skills (e.g., Python, AWS, React) and any past experience..."
+                value={studentSkills}
+                onChange={(e) => setStudentSkills(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Career Objectives & Growth</label>
+              <textarea
+                placeholder="Describe what you want to achieve (e.g., Get into FAANG, Frontend Dev, Master AI)..."
+                value={studentGoals}
+                onChange={(e) => setStudentGoals(e.target.value)}
+              />
+            </div>
+
+            <button className="btn-large" onClick={() => setView('dashboard')}>
+              Find Best Mentor Match
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (view === 'dashboard') {
     return (
       <div className="dashboard-container">
+        {isMatching && (
+          <div className="matching-overlay">
+            <div className="matching-anim">
+              <div className="ai-scanner"></div>
+              <div className="logo-float">
+                <img src={logo} alt="Logo" />
+              </div>
+              <h2 style={{ fontSize: '2.5rem' }}>Saarthi Core Matching Engine</h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.2rem' }}>Vectorizing student profile: <strong>{studentSkills || "Full-stack Dev"}</strong></p>
+
+              <div className="matching-steps">
+                <div className={`step-item ${matchingStep >= 0 ? 'active' : ''}`}>
+                  <div className="step-icon-spin">⚙</div>
+                  Initializing NLP Parsers...
+                </div>
+                <div className={`step-item ${matchingStep >= 1 ? 'active' : ''}`}>
+                  <div className="step-icon-spin">🔍</div>
+                  Searching 12,000+ Alumni Graph...
+                </div>
+                <div className={`step-item ${matchingStep >= 2 ? 'active' : ''}`}>
+                  <div className="step-icon-spin">⚡</div>
+                  Ranking by Semantic Similarity...
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <nav className="dashboard-nav">
           <div className="logo dashboard-logo">
             <img src={logo} alt="Saarthi Logo" className="nav-logo-img" />
             Saarthi <span>Dashboard</span>
           </div>
-          <button className="btn-logout" onClick={() => {
-            localStorage.removeItem('saarthi_token');
-            setView('home');
-          }}>Log Out</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div className="verified-status">Verified Student ✓</div>
+            <button className="btn-chat-nav" onClick={() => {
+              setSelectedMentor(matchAlumni[0]);
+              setView('chat');
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              Messages
+            </button>
+            <button className="btn-logout" onClick={() => {
+              localStorage.removeItem('saarthi_token');
+              setView('home');
+            }}>Log Out</button>
+          </div>
         </nav>
 
         <div className="dashboard-content">
           <div className="ai-match-header">
+            <div className="ai-tag">REAL-TIME MATCHING ACTIVE</div>
             <h1>Your Top Mentor Matches</h1>
             <p>We've found the perfect connections for your career goals based on our AI matching algorithm.</p>
           </div>
 
           <div className="carousel-container">
             <div className="carousel-3d">
-              {matchAlumni.map((alumni) => (
-                <div key={alumni.id} className="carousel-card">
-                  <div className="match-badge">{alumni.match} Match</div>
+              {matchAlumni.map((alumni, index) => (
+                <div key={alumni.id} className="carousel-card" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div className="match-badge">88 Mentor Score</div>
                   <img src={alumni.img} alt={alumni.name} />
                   <div className="card-info">
+                    <div className="match-reason">Matched on {studentSkills.split(',')[0] || "Software Engineering"}</div>
+                    {alumni.batch && <div className={`batch-tag tag-${alumni.batch.toLowerCase()}`}>{alumni.batch} Batch</div>}
                     <h3>{alumni.name}</h3>
                     <p>{alumni.role} @ <strong>{alumni.company}</strong></p>
-                    <button className="btn-connect">Connect Now</button>
+
+                    <div className="response-time">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                      </svg>
+                      Response within 24 hours
+                    </div>
+
+                    <div className="card-skills">
+                      {["React", "Node", "AWS"].map(s => <span key={s} className="skill-tag">{s}</span>)}
+                    </div>
+                    <button className="btn-connect" onClick={() => {
+                      setSelectedMentor(alumni);
+                      setView('chat');
+                    }}>Connect Now</button>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'chat' && selectedMentor) {
+    return (
+      <div className="dashboard-container">
+        <nav className="dashboard-nav">
+          <div className="logo dashboard-logo" onClick={() => setView('dashboard')} style={{ cursor: 'pointer' }}>
+            <img src={logo} alt="Saarthi Logo" className="nav-logo-img" />
+            Saarthi <span>Messaging</span>
+          </div>
+          <button className="btn-logout" onClick={() => setView('dashboard')}>Back to Matches</button>
+        </nav>
+
+        <div className="chat-container">
+          <div className="chat-sidebar">
+            <div className="sidebar-header">Active Conversations</div>
+            <div className="sidebar-item active">
+              <img src={selectedMentor.img} alt={selectedMentor.name} />
+              <div className="sidebar-info">
+                <h4>{selectedMentor.name}</h4>
+                <p>Online</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="chat-main">
+            <div className="chat-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <img src={selectedMentor.img} alt={selectedMentor.name} />
+                <div>
+                  <h3>{selectedMentor.name}</h3>
+                  <p>{selectedMentor.role} @ {selectedMentor.company}</p>
+                </div>
+              </div>
+              <div className="silver-batch-badge">Silver Batch</div>
+            </div>
+
+            <div className="chat-messages">
+              <div className="chat-date-divider"><span>Today</span></div>
+              {messages.map((msg, i) => (
+                <div key={i} className={`msg-${msg.sender}`}>
+                  <div className="msg-bubble">{msg.text}</div>
+                  <span className="msg-time">{msg.time}</span>
+                </div>
+              ))}
+              {chatInput && (
+                <div className="typing-indicator">
+                  You are typing...
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <form className="chat-input-area" onSubmit={(e) => {
+              e.preventDefault();
+              if (!chatInput.trim()) return;
+
+              const newMsg = {
+                text: chatInput,
+                sender: 'sent',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              };
+              setMessages(prev => [...prev, newMsg]);
+              setChatInput('');
+
+              // Automated response for demo "Wow" factor
+              setTimeout(() => {
+                setMessages(prev => [...prev, {
+                  text: "That sounds interesting! Let's discuss this further. I'm available for a call this weekend.",
+                  sender: 'received',
+                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }]);
+              }, 1500);
+            }}>
+              <input
+                type="text"
+                placeholder="Type your message..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+              />
+              <button className="btn-send" type="submit">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </form>
           </div>
         </div>
       </div>

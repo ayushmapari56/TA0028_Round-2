@@ -37,6 +37,21 @@ const userSchema = new mongoose.Schema({
     currentCompany: { type: String }, // For alumni
     designation: { type: String }, // For alumni
 
+    // Matching Fields
+    skills: [{ type: String }],
+    goals: [{ type: String }], // Primarily for students
+    domain: { type: String }, // e.g., "Engineering", "Arts"
+    availability: { type: Boolean, default: true },
+    isDigiLockerVerified: { type: Boolean, default: false }, // For alumni
+
+    // Scoring Metrics
+    mentorScore: {
+        objective: { type: Number, default: 0 }, // 0-10
+        feedback: { type: Number, default: 0 }, // 0-10 average
+        total: { type: Number, default: 0 }    // Weighted total
+    },
+    feedbackCount: { type: Number, default: 0 },
+
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);
