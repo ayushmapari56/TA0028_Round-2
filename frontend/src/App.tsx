@@ -15,8 +15,15 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleGetStarted = () => {
-    setView('enroll');
-    window.scrollTo({ top: 0 });
+    // If we're already on the home page, scroll down. Otherwise go to home and scroll.
+    if (view !== 'home') {
+      setView('home');
+      setTimeout(() => {
+        enrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      enrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleEnrollClick = (role: 'alumni' | 'student') => {
@@ -126,83 +133,6 @@ export default function App() {
           </div>
 
         </main>
-      </div>
-    );
-  }
-
-  if (view === 'enroll') {
-    return (
-      <div className="splash-container">
-
-        {/* Left Side: Big Image */}
-        <div className="splash-image-side">
-          <img
-            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-            alt="Students Networking"
-            className="splash-image"
-          />
-        </div>
-
-        {/* Right Side: Content & Buttons */}
-        <div className="splash-content-side">
-          <div className="splash-bg-decor">
-            <h3>20<sup>+</sup></h3>
-            <p>Years more of business consulting experiences we have.</p>
-          </div>
-
-          <div className="splash-content">
-            <div className="splash-content-subtitle">
-              <span>//</span> NUMBER #1 COLLEGE NETWORK
-            </div>
-
-            <h2>Empowering your<br />career vision</h2>
-            <p>Our mission is to empower students of all backgrounds to thrive in an ever-changing professional landscape. We are committed to delivering exceptional networking value and strategic mentorship from top industry leaders.</p>
-
-            <div className="splash-features">
-              <div className="feature-item">
-                <svg className="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                Expertise and experience
-              </div>
-              <div className="feature-item">
-                <svg className="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                Student Centric approach
-              </div>
-              <div className="feature-item">
-                <svg className="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                Commitment to excellence
-              </div>
-            </div>
-
-            <div className="splash-buttons">
-              <button className="btn-splash" onClick={() => handleEnrollClick('alumni')}>
-                Enroll as Alumni
-                <div className="arrow-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </button>
-              <button className="btn-splash" onClick={() => handleEnrollClick('student')}>
-                Enroll as Student
-                <div className="arrow-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </button>
-            </div>
-
-            <p className="login-switch-text" style={{ marginTop: '2.5rem', textAlign: 'left' }}>
-              <span onClick={() => setView('home')}>← Back to Homepage</span>
-            </p>
-          </div>
-        </div>
       </div>
     );
   }
@@ -336,6 +266,79 @@ export default function App() {
 
         </section>
       </main>
+
+      {/* Enrollment Section (Integrated via scroll instead of separate view) */}
+      <section ref={enrollRef}>
+        <div className="splash-container">
+
+          {/* Left Side: Big Image */}
+          <div className="splash-image-side">
+            <img
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Students Networking"
+              className="splash-image"
+            />
+          </div>
+
+          {/* Right Side: Content & Buttons */}
+          <div className="splash-content-side">
+            <div className="splash-bg-decor">
+              <h3>20<sup>+</sup></h3>
+              <p style={{ fontSize: '0.85rem' }}>Years of combined mentor expertise.</p>
+            </div>
+
+            <div className="splash-content" style={{ padding: '2rem 4rem' }}>
+              <div className="splash-content-subtitle">
+                <span>//</span> NUMBER #1 COLLEGE NETWORK
+              </div>
+
+              <h2 style={{ fontSize: '2.8rem', marginBottom: '1rem' }}>Empowering your<br />career vision</h2>
+              <p style={{ fontSize: '1rem', marginBottom: '2rem' }}>Our mission is to empower students of all backgrounds to thrive in an ever-changing professional landscape. We deliver exceptional networking value and mentorship.</p>
+
+              <div className="splash-features" style={{ marginBottom: '2rem' }}>
+                <div className="feature-item" style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>
+                  <svg className="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Expertise and experience
+                </div>
+                <div className="feature-item" style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>
+                  <svg className="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Student Centric approach
+                </div>
+                <div className="feature-item" style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>
+                  <svg className="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Commitment to excellence
+                </div>
+              </div>
+
+              <div className="splash-buttons">
+                <button className="btn-splash" style={{ padding: '1rem 1.5rem', fontSize: '1rem' }} onClick={() => handleEnrollClick('alumni')}>
+                  Enroll as Alumni
+                  <div className="arrow-icon" style={{ width: '30px', height: '30px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </button>
+                <button className="btn-splash" style={{ padding: '1rem 1.5rem', fontSize: '1rem' }} onClick={() => handleEnrollClick('student')}>
+                  Enroll as Student
+                  <div className="arrow-icon" style={{ width: '30px', height: '30px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   );
