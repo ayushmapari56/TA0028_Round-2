@@ -149,7 +149,7 @@ export default function App() {
 
         <div className="nav-actions">
           <button className="btn-login" onClick={() => handleGetStarted()}>Log in</button>
-          <button className="btn-primary" onClick={() => handleGetStarted()}>Try for free</button>
+          <button className="btn-primary" onClick={() => handleGetStarted()}>Sign-up</button>
         </div>
       </nav>
 
