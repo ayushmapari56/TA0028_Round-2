@@ -299,10 +299,6 @@ export default function App() {
 
           {/* Right Side: Content & Buttons */}
           <div className="splash-content-side">
-            <div className="splash-bg-decor animate-on-scroll delay-500">
-              <h3>20<sup>+</sup></h3>
-              <p style={{ fontSize: '0.85rem' }}>Years of combined mentor expertise.</p>
-            </div>
 
             <div className="splash-content" style={{ padding: '2rem 4rem' }}>
               <div className="splash-content-subtitle animate-on-scroll delay-100">
