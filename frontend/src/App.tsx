@@ -21,6 +21,10 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [college, setCollege] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [branch, setBranch] = useState('');
+  const [year, setYear] = useState('');
+  const [linkedin, setLinkedin] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
   // Intersection Observer for scroll animations
@@ -54,7 +58,7 @@ export default function App() {
   const handleEnrollClick = (role: 'alumni' | 'student') => {
     setLoginRole(role);
     setView('login');
-    setIsLoginMode(true); // Default to login view
+    setIsLoginMode(false); // Default to Register/Signup view
     setErrorMsg('');
     window.scrollTo({ top: 0 });
   };
@@ -78,7 +82,7 @@ export default function App() {
       const response = await fetch(`http://localhost:5000${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role: loginRole, college })
+        body: JSON.stringify({ email, password, role: loginRole, college, fullName, branch, year, linkedin })
       });
 
       const data = await response.json();
@@ -176,17 +180,46 @@ export default function App() {
 
               <form onSubmit={handleAuthSubmit}>
 
-                {loginRole === 'student' && (
+                {!isLoginMode && (
                   <div className="form-group">
-                    <label>Select College / Institution</label>
-                    <select className="form-control" required value={college} onChange={(e) => setCollege(e.target.value)}>
-                      <option value="" disabled>Choose your college...</option>
-                      <option value="nit">National Institute of Technology</option>
-                      <option value="iit">Indian Institute of Technology</option>
-                      <option value="bits">BITS Pilani</option>
-                      <option value="other">Other Institution</option>
-                    </select>
+                    <label>Full Name</label>
+                    <input type="text" className="form-control" placeholder="Enter your full name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
                   </div>
+                )}
+
+                {/* Additional Fields for Student Sign Up */}
+                {loginRole === 'student' && !isLoginMode && (
+                  <>
+                    <div className="form-group">
+                      <label>Select College / Institution</label>
+                      <select className="form-control" required value={college} onChange={(e) => setCollege(e.target.value)}>
+                        <option value="" disabled>Choose your college...</option>
+                        <option value="nit">National Institute of Technology</option>
+                        <option value="iit">Indian Institute of Technology</option>
+                        <option value="bits">BITS Pilani</option>
+                        <option value="other">Other Institution</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Branch / Major</label>
+                      <input type="text" className="form-control" placeholder="e.g., Computer Science, Mechanical" required value={branch} onChange={(e) => setBranch(e.target.value)} />
+                    </div>
+                    <div className="form-group">
+                      <label>Current Year of Study</label>
+                      <select className="form-control" required value={year} onChange={(e) => setYear(e.target.value)}>
+                        <option value="" disabled>Select Year...</option>
+                        <option value="1">First Year</option>
+                        <option value="2">Second Year</option>
+                        <option value="3">Third Year</option>
+                        <option value="4">Fourth Year</option>
+                        <option value="5">Masters / PhD</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>LinkedIn Profile URL</label>
+                      <input type="url" className="form-control" placeholder="https://linkedin.com/in/username" required value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
+                    </div>
+                  </>
                 )}
 
                 <div className="form-group">
