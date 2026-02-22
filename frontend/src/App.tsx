@@ -114,6 +114,8 @@ export default function App() {
     e.preventDefault();
     setErrorMsg('');
 
+    const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+
     // --- DEMO BYPASS FOR HACKATHON ---
     if (email === 'student@saarthi.com' && password === 'password123' && isLoginMode) {
       localStorage.setItem('saarthi_token', 'demo_token_123');
