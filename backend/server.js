@@ -27,14 +27,23 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/saarthi';
 
-mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 3000 })
-    .then(() => {
-        console.log('✅ Successfully connected to MongoDB Database');
-        app.listen(PORT, () => {
-            console.log(`🚀 Saarthi Backend Server is running on port ${PORT}`);
+if (process.env.NODE_ENV !== 'production') {
+    mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 3000 })
+        .then(() => {
+            console.log('✅ Successfully connected to MongoDB Database');
+            app.listen(PORT, () => {
+                console.log(`🚀 Saarthi Backend Server is running on port ${PORT}`);
+            });
+        })
+        .catch((error) => {
+            console.error('❌ Error connecting to MongoDB:', error);
         });
-    })
-    .catch((error) => {
-        console.error('❌ Error connecting to MongoDB:', error);
-        process.exit(1);
-    });
+} else {
+    // In production (Vercel), we connect to mongoose but don't call listen()
+    // Vercel handles the serverless execution
+    mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 })
+        .then(() => console.log('✅ MongoDB Connected (Serverless Mode)'))
+        .catch(err => console.error('❌ MongoDB Connection Error:', err));
+}
+
+export default app;

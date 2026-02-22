@@ -123,7 +123,7 @@ export default function App() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, role: loginRole, college, fullName, branch, year, linkedin, isDigiLockerVerified })
@@ -156,7 +156,7 @@ export default function App() {
     setOtpError('');
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/verify-otp`, {
+      const response = await fetch(`/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp: otpCode })
