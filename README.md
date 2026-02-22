@@ -1,4 +1,4 @@
-# Alumini Meet Platform
+# Saarthi Platform
 
 A modern, scalable platform designed to connect alumni, students, and institutions seamlessly.
 
