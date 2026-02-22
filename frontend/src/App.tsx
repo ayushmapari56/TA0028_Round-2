@@ -3,7 +3,7 @@ import './index.css';
 import logo from './assets/logo.png';
 
 export default function App() {
-  const [view, setView] = useState<'home' | 'login'>('home');
+  const [view, setView] = useState<'home' | 'enroll' | 'login'>('home');
   const [loginRole, setLoginRole] = useState<'alumni' | 'student' | null>(null);
   const [isLoginMode, setIsLoginMode] = useState(true); // Toggle between Login and Register
   const enrollRef = useRef<HTMLElement>(null);
@@ -15,7 +15,8 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleGetStarted = () => {
-    enrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setView('enroll');
+    window.scrollTo({ top: 0 });
   };
 
   const handleEnrollClick = (role: 'alumni' | 'student') => {
@@ -23,7 +24,7 @@ export default function App() {
     setView('login');
     setIsLoginMode(true); // Default to login view
     setErrorMsg('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0 });
   };
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -125,6 +126,43 @@ export default function App() {
           </div>
 
         </main>
+      </div>
+    );
+  }
+
+  if (view === 'enroll') {
+    return (
+      <div className="splash-container">
+        <div className="splash-bg-blob top-left"></div>
+        <div className="splash-bg-blob bottom-right"></div>
+
+        <div className="splash-content">
+          <h2>Choose your path</h2>
+          <p>Join the Saarthi platform to connect, grow, and succeed alongside top graduates and ambitious students.</p>
+
+          <div className="splash-buttons">
+            <button className="btn-splash" onClick={() => handleEnrollClick('alumni')}>
+              Enroll as Alumni
+              <div className="arrow-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+            <button className="btn-splash" onClick={() => handleEnrollClick('student')}>
+              Enroll as Student
+              <div className="arrow-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+          </div>
+
+          <p className="login-switch-text" style={{ marginTop: '2.5rem' }}>
+            <span onClick={() => setView('home')}>← Back to Homepage</span>
+          </p>
+        </div>
       </div>
     );
   }
@@ -258,27 +296,6 @@ export default function App() {
 
         </section>
       </main>
-
-      {/* Enrollment Section (Target of smooth scroll) */}
-      <section ref={enrollRef} className="enroll-section">
-        <h2>Choose your path</h2>
-        <p>Join the Saarthi platform to connect, grow, and succeed alongside top graduates and ambitious students.</p>
-        <div className="enroll-cards">
-
-          <div className="enroll-card" onClick={() => handleEnrollClick('alumni')}>
-            <div className="enroll-icon">🎓</div>
-            <h3>Enroll as Alumni</h3>
-            <p>Give back to your community, mentor students, and expand your professional network with leading experts.</p>
-          </div>
-
-          <div className="enroll-card" onClick={() => handleEnrollClick('student')}>
-            <div className="enroll-icon">🚀</div>
-            <h3>Enroll as Student</h3>
-            <p>Find guidance, seek mentorship, and unlock endless placement opportunities early in your career.</p>
-          </div>
-
-        </div>
-      </section>
 
     </div>
   );
