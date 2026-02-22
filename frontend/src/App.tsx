@@ -27,6 +27,11 @@ export default function App() {
   const [linkedin, setLinkedin] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
+  // OTP Verification States
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpError, setOtpError] = useState('');
+
   // Intersection Observer for scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -67,15 +72,7 @@ export default function App() {
     e.preventDefault();
     setErrorMsg('');
 
-    // --- TEMPORARY MOCK AUTHENTICATION FOR UI SHOWCASE ---
-    // Bypassing the real backend so you can easily see the dashboard
-    console.log(`Mocking auth for: ${email}`);
-    localStorage.setItem('saarthi_token', 'mock_token_123');
-    setView('dashboard');
-    window.scrollTo({ top: 0 });
-
-    /* 
-    // REAL BACKEND LOGIC (Commented out for now)
+    // --- RE-ENABLING REAL BACKEND LOGIC FOR OTP ---
     const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
 
     try {
@@ -91,14 +88,48 @@ export default function App() {
         throw new Error(data.message || 'Authentication failed');
       }
 
-      // Success
-      localStorage.setItem('saarthi_token', data.token);
-      setView('dashboard');
-      window.scrollTo({ top: 0 });
+      if (isLoginMode) {
+        // Normal Login Success
+        localStorage.setItem('saarthi_token', data.token);
+        setView('dashboard');
+        window.scrollTo({ top: 0 });
+      } else {
+        // Registration Success -> Show OTP Modal
+        // Note: The backend doesn't send a token yet, it requires verification
+        setShowOtpModal(true);
+      }
+
     } catch (error: any) {
       setErrorMsg(error.message);
     }
-    */
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setOtpError('');
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpCode })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Verification failed');
+      }
+
+      // Final Success! OTP matches
+      localStorage.setItem('saarthi_token', data.token);
+      setShowOtpModal(false);
+      setView('dashboard');
+      window.scrollTo({ top: 0 });
+
+    } catch (error: any) {
+      setOtpError(error.message);
+    }
   };
 
   if (view === 'login-chooser') {
@@ -257,6 +288,65 @@ export default function App() {
           </div>
 
         </main>
+
+        {/* --- OTP VERIFICATION MODAL OVERLAY --- */}
+        {showOtpModal && (
+          <div className="modal-overlay" style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex',
+            justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+            backdropFilter: 'blur(4px)'
+          }}>
+            <div className="modal-content" style={{
+              background: 'white', padding: '3rem', borderRadius: '16px',
+              maxWidth: '400px', width: '90%', textAlign: 'center',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+            }}>
+              <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                <div style={{ background: '#e0f2fe', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)' }}>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', fontWeight: 700 }}>Check your email</h3>
+              <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+                We've sent a 6-digit verification code to <strong>{email}</strong>. Please enter it below to verify your account.
+              </p>
+
+              {otpError && <div style={{ color: 'white', background: '#ef4444', padding: '0.5rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.9rem' }}>{otpError}</div>}
+
+              <form onSubmit={handleVerifyOtp}>
+                <input
+                  type="text"
+                  maxLength={6}
+                  placeholder="000000"
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))} // Numbers only
+                  style={{
+                    width: '100%', padding: '1rem', fontSize: '2rem',
+                    letterSpacing: '0.5rem', textAlign: 'center',
+                    border: '2px solid #e2e8f0', borderRadius: '8px',
+                    marginBottom: '1.5rem', fontFamily: 'monospace'
+                  }}
+                  required
+                />
+                <button type="submit" className="btn-primary" style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', justifyContent: 'center' }}>
+                  Verify & Continue
+                </button>
+              </form>
+
+              <button
+                onClick={() => setShowOtpModal(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', marginTop: '1rem', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     );
   }

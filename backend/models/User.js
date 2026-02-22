@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema({
     firstName: { type: String, required: false },
     lastName: { type: String, required: false },
 
+    // OTP Verification Fields
+    isVerified: { type: Boolean, default: false },
+    verificationOTP: { type: String },
+    otpExpiresAt: { type: Date },
+
     // Role Specific Fields
     college: {
         type: String,
